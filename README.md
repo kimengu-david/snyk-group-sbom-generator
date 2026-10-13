@@ -29,6 +29,14 @@ python3 group_sbom_generator.py --groupId <GROUP_ID> [options]
 | `--concurrency, -c` | `8` | Parallel workers for SBOM fetches |
 | `--force` | off | Regenerate every SBOM even if already on disk (default resumes) |
 
+**Example — produce just a CSV report:**
+
+```bash
+python3 group_sbom_generator.py --groupId <GROUP_ID> --report --reportFormat csv
+```
+
+Swap `csv` for `json` or `html`, or combine them, e.g. `--reportFormat html,json,csv`.
+
 ## What it writes
 
 - One SBOM file per project: `<outputDir>/<org>/<project>__<id>.<format>`
