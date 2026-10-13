@@ -42,26 +42,9 @@ python3 group_sbom_generator.py --groupId <GROUP_ID> [options]
 
 ## Scale notes
 
-Both the per-org project listing and the SBOM fetches run through the same
-bounded thread pool (`--concurrency`), so wall-clock time now tracks total
-project count more than org count. Rough math at ~0.4s/call (measured) and
-concurrency 10: ~100 orgs/1,000 projects in well under a minute; ~1,000
-orgs/10,000 projects in a few minutes; low tens of thousands of
-orgs/projects starts climbing into the 10-20 minute range. That's
-wall-clock time under ideal conditions — it doesn't account for how a given
-tenant's actual API rate limits hold up at that request volume, which this
-hasn't been stress-tested against.
-
-- **Concurrent** SBOM fetches via a bounded thread pool (`--concurrency`)
-- **Rate-limit aware** — retries on 429/5xx with backoff, honoring a
-  `Retry-After` header when the server sends one
-- **Resumable by default** — a project already written to disk is read back
-  instead of re-fetched, so re-running the same command after a crash or
-  interruption just picks up where it left off (`--force` to disregard)
-- Per-project dependency trees are written as their own small HTML files
-  rather than embedded in the main report, so report size stays proportional
-  to project count, not to the combined size of every dependency graph in
-  the Group
+Handles large Groups efficiently: concurrent fetching, automatic retry on
+rate limits, and resumable if interrupted (safe to just re-run). Report
+size stays manageable regardless of how many projects are scanned.
 
 ## Known limitation
 
